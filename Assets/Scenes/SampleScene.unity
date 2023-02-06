@@ -240,7 +240,8 @@ MonoBehaviour:
   _sensitivity: 400
   _camLimitMin: -90
   _camLimitMax: 90
-  _speed: 0
+  _speed: 10
+  _jumpForce: 10
 --- !u!54 &636463447
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // cam movement
     [SerializeField] private Transform _eyes;
     [SerializeField] private float _sensitivity;
     [Range(-90f, 0f)]
@@ -12,8 +13,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _camLimitMax;
     private float _camAngle = 0.0f;
 
+    // Movement
     [SerializeField] private float _speed;
     private Rigidbody _rb;
+
+    // Jumping
+    [SerializeField] private float _jumpForce;
 
     private void Start()
     {
@@ -23,6 +28,11 @@ public class PlayerMovement : MonoBehaviour
     {
         RotateEyes();
         RotateBody();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TryJump();
+        }
     }
 
     private void FixedUpdate()
@@ -52,5 +62,25 @@ public class PlayerMovement : MonoBehaviour
         Vector3 dir = (transform.right * xDir + transform.forward * zDir);
 
         _rb.velocity = new Vector3(0, _rb.velocity.y, 0) + dir.normalized * _speed;
+    }
+
+    private void TryJump()
+    {
+        if (IsGrounded())
+        {
+            Jump(_jumpForce);
+        }
+    }
+
+    private void Jump(float jumpForce)
+    {
+        _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+        _rb.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
+    }
+
+    private bool IsGrounded()
+    {
+        RaycastHit hit;
+        return Physics.Raycast(transform.position, -transform.up, out hit, 1.1f);
     }
 }
