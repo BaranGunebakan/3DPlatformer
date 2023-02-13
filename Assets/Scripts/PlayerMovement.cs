@@ -12,16 +12,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _sensitivity;
     [Range(-90f, 0f)]
     [SerializeField] private float _camLimitMin;
-    [Range(0, 09f)]
+    [Range(0, 90f)]
     [SerializeField] private float _camLimitMax;
     private float _camAngle = 0.0f;
 
     // Movement
-    [SerializeField] private float _speed;
     private Rigidbody _rb;
 
     // Jumping
-    [SerializeField] private float _jumpForce;
+
+    // Interact
+    [SerializeField] private KeyCode _interactKey;
+    [SerializeField] private float _interactRange;
 
     // Ability
     [SerializeField] private KeyCode _abilityKey;
@@ -36,6 +38,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         Rb = GetComponent<Rigidbody>();
+
+        Cursor.visible = false;
     }
     private void Update()
     {
@@ -45,6 +49,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TryJump();
+        }
+
+        if (Input.GetKeyDown(_interactKey))
+        {
+            TryInteract();
         }
 
         if (Input.GetKeyDown(_abilityKey))
@@ -82,20 +91,32 @@ public class PlayerMovement : MonoBehaviour
         Rb.velocity = new Vector3(0, Rb.velocity.y, 0) + dir.normalized * _stats.moveSpeed;
     }
 
-    //
+    private void TryInteract()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(_eyes.position, _eyes.forward, out hit, _interactRange))
+        {
+            IInteractable interactable = hit.collider.gameObject.GetComponent<IInteractable>();
+
+            if (interactable != null)
+            {
+                interactable.Interact();
+            }
+        }
+    }
 
     private void TryJump()
     {
         if (IsGrounded())
         {
-            Jump(_jumpForce);
+            Jump(_stats.jumpHeight);
         }
     }
 
     private void Jump(float jumpForce)
     {
         Rb.velocity = new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
-        Rb.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
+        Rb.AddForce(transform.up * _stats.jumpHeight, ForceMode.Impulse);
     }
 
     private bool IsGrounded()
