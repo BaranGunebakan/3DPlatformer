@@ -236,12 +236,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1151c203d9cf6245a2fe260c791dd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stats: {fileID: 0}
   _eyes: {fileID: 963194228}
   _sensitivity: 400
   _camLimitMin: -90
   _camLimitMax: 90
   _speed: 10
   _jumpForce: 10
+  _abilityKey: 102
+  _ability: {fileID: 11400000, guid: ee06f09f1a08c154da4f61664d01cbf4, type: 2}
 --- !u!54 &636463447
 Rigidbody:
   m_ObjectHideFlags: 0
