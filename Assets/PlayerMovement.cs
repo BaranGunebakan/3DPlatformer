@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // Stats
+    [SerializeField] private Stats _stats;
+
     // cam movement
     [SerializeField] private Transform _eyes;
     [SerializeField] private float _sensitivity;
@@ -20,9 +23,19 @@ public class PlayerMovement : MonoBehaviour
     // Jumping
     [SerializeField] private float _jumpForce;
 
+    // Ability
+    [SerializeField] private KeyCode _abilityKey;
+    [SerializeField] private Ability _ability;
+
+    public Rigidbody Rb 
+    { 
+        get => _rb; 
+        private set => _rb = value;
+    }
+
     private void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        Rb = GetComponent<Rigidbody>();
     }
     private void Update()
     {
@@ -32,6 +45,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TryJump();
+        }
+
+        if (Input.GetKeyDown(_abilityKey))
+        {
+            _ability.Use(this);
         }
     }
 
@@ -61,8 +79,10 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 dir = (transform.right * xDir + transform.forward * zDir);
 
-        _rb.velocity = new Vector3(0, _rb.velocity.y, 0) + dir.normalized * _speed;
+        Rb.velocity = new Vector3(0, Rb.velocity.y, 0) + dir.normalized * _stats.moveSpeed;
     }
+
+    //
 
     private void TryJump()
     {
@@ -74,8 +94,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump(float jumpForce)
     {
-        _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
-        _rb.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
+        Rb.velocity = new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
+        Rb.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
     }
 
     private bool IsGrounded()
