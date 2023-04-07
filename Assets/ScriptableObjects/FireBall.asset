@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16f87da6bde9ad149b9a5c6e5009a577, type: 3}
   m_Name: FireBall
   m_EditorClassIdentifier: 
-  _bullet: {fileID: 0}
+  _bullet: {fileID: 1798217684151630055, guid: 500262b689777f4478470ebf55539194, type: 3}

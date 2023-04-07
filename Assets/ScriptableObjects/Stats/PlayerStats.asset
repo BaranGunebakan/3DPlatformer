@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   moveSpeed: 10
-  jumpHeight: 15
+  jumpHeight: 8

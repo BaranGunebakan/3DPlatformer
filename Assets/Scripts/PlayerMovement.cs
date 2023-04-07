@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody _rb;
 
     // Jumping
+    [SerializeField] private int maxJump = 2;
+    [SerializeField] private int RemainingJump;
 
     // Interact
     [SerializeField] private KeyCode _interactKey;
@@ -29,10 +31,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private KeyCode _abilityKey;
     [SerializeField] private Ability _ability;
 
+    // Gun Inventory
+    public GameObject AK47;
+    public GameObject Pistol;
+
+    // Fireball Firepoint
+    [SerializeField] private GameObject FireballFirepoint;
+
     public Rigidbody Rb 
     { 
         get => _rb; 
         private set => _rb = value;
+    }
+
+    public GameObject FireballFirePoint
+    {
+        get => FireballFirepoint;
+        private set => FireballFirepoint = value;
     }
 
     private void Start()
@@ -43,6 +58,19 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Update()
     {
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            AK47.SetActive(true);
+            Pistol.SetActive(false);
+        }
+
+        if (Input.GetKey(KeyCode.Alpha2))
+        {
+            AK47.SetActive(false);
+            Pistol.SetActive(true);
+        }
+
+
         RotateEyes();
         RotateBody();
 
@@ -54,6 +82,21 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(_interactKey))
         {
             TryInteract();
+        }
+
+        if (Input.GetKeyDown(_abilityKey))
+        {
+            _ability.Use(this);
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Sprint();
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            StopSprint();
         }
 
         if (Input.GetKeyDown(_abilityKey))
@@ -91,6 +134,16 @@ public class PlayerMovement : MonoBehaviour
         Rb.velocity = new Vector3(0, Rb.velocity.y, 0) + dir.normalized * _stats.moveSpeed;
     }
 
+    private void Sprint()
+    {
+        _stats.moveSpeed = 15;
+    }
+
+    private void StopSprint()
+    {
+        _stats.moveSpeed = 10;
+    }
+
     private void TryInteract()
     {
         RaycastHit hit;
@@ -109,19 +162,30 @@ public class PlayerMovement : MonoBehaviour
     {
         if (IsGrounded())
         {
+            RemainingJump = maxJump;
+            Jump(_stats.jumpHeight);
+        }
+        else if (RemainingJump > 0)
+        {
             Jump(_stats.jumpHeight);
         }
     }
 
-    private void Jump(float jumpForce)
+    private void Jump(float _jumpHeight)
     {
-        Rb.velocity = new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
-        Rb.AddForce(transform.up * _stats.jumpHeight, ForceMode.Impulse);
+        if (RemainingJump > 0)
+        {
+            RemainingJump--;
+            Rb.velocity = new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
+            Rb.AddForce(transform.up * _stats.jumpHeight, ForceMode.Impulse);
+        }
+        
     }
 
     private bool IsGrounded()
     {
+
         RaycastHit hit;
-        return Physics.Raycast(transform.position, -transform.up, out hit, 1.1f);
+        return Physics.Raycast(transform.position, -transform.up, out hit, 2f);
     }
 }
